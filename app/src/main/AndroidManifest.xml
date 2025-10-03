@@ -31,8 +31,23 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="29">
         <activity
-            android:name=".pruebas"
+            android:name=".TetrisActivity"
             android:exported="false" />
+        <activity
+            android:name=".FingerBattleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fingerbattle"
+            android:exported="false" />
+        <activity
+            android:name=".GamesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AirHockeyActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name=".Novelas.novelas2"
             android:exported="false" />
@@ -64,12 +79,6 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".version2"
-            android:exported="false" />
-        <activity
-            android:name=".cabiosgit"
-            android:exported="false" />
-        <activity
             android:name=".SpinnerActivity"
             android:exported="false" />
         <activity
@@ -84,9 +93,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- ===== Pantallas varias ===== -->
-        <activity
-            android:name=".musicactivity"
-            android:exported="false" /> <!-- ===== Watch que aceptan abrir videos externos ===== -->
+        <!-- ===== Watch que aceptan abrir videos externos ===== -->
         <activity
             android:name=".WatchViewActivities.WatchActivityViewGeneral"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize|uiMode"
@@ -127,10 +134,6 @@
             android:exported="false" />
         <activity
             android:name=".Categorias.Serie"
-            android:configChanges="orientation|screenSize"
-            android:exported="false" />
-        <activity
-            android:name=".Categorias.Animaciones"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity

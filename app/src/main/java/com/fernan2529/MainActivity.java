@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         SparseArray<Class<?>> map = new SparseArray<>();
         // Cabecera
         map.put(R.id.donaciones,       donaciones.class);
-        map.put(R.id.btn_juegos,       JuegosActivity.class);
+        map.put(R.id.btn_juegos,       GamesActivity.class);
         map.put(R.id.potifyy,          MusicActivity.class);
         map.put(R.id.btnchat,          SplashActivity.class);
         // Fila 1

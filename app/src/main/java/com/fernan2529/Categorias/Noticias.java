@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.SparseArray;
-import android.widget.ImageView;
 
 import com.fernan2529.R;
 import com.fernan2529.MainActivity;   // cámbialo si tu inicio real es otro
@@ -46,7 +45,7 @@ public class Noticias extends AppCompatActivity {
         setupSpinner();     // lógica con spinner_activities
         setupWebButtons();
         setupRtsShortcut(); // caso especial: abrir RTS en WebView con anuncios desde el tile bbcnews
-        setupCnnTile();     // CNN abre WatchActivityViewGeneral
+        setupCnnTile();     // ✅ MOVIDO: registrar CNN después de setContentView()
     }
 
     // ----------------- Utilidades -----------------
@@ -187,18 +186,14 @@ public class Noticias extends AppCompatActivity {
 
     // ----------------- Tile CNN: abrir con WatchActivityViewGeneral -----------------
     private void setupCnnTile() {
-        ImageView imageViewCnn = findViewById(R.id.cnn);
-        if (imageViewCnn == null) return;
-
-        imageViewCnn.setOnClickListener(v -> {
-            if (!canClick()) return;
-            String videoUrl = "https://d3696l48vwq25d.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-0g2918mubifjw/index.m3u8";
-
-            // Evita depender de newIntent(); pasa extras directamente
-            Intent intent = new Intent(Noticias.this, WatchActivityViewGeneral.class);
-            intent.putExtra("url", videoUrl);
-            intent.putExtra("title", "CNN en vivo");
-            startActivity(intent);
-        });
+        View cnnTile = findViewById(R.id.cnn);
+        if (cnnTile != null) {
+            cnnTile.setOnClickListener(v -> {
+                if (!canClick()) return;
+                String cnnUrl = "https://d3696l48vwq25d.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-0g2918mubifjw/index.m3u8";
+                Intent i = WatchActivityViewGeneral.newIntent(Noticias.this, cnnUrl, "CNN en vivo");
+                startActivity(i);
+            });
+        }
     }
 }

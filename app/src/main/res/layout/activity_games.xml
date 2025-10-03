@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="#000000"
+    android:layout_height="match_parent">
+
+    <GridLayout
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:columnCount="2"
+        android:rowCount="2">
+
+        <!-- TILE 1 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@drawable/tile_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:onClick="openA"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="106dp"
+                android:layout_height="86dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerInside"
+                android:src="@drawable/air" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="AirHockey"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- TILE 2 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@drawable/tile_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:onClick="openB"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="95dp"
+                android:layout_height="86dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerInside"
+                android:src="@drawable/tetris" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tetris"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- TILE 3 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:background="@drawable/tile_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:onClick="openC"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="95dp"
+                android:layout_height="86dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerInside"
+                android:src="@drawable/finger" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="FingerBattle"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+
+    </GridLayout>
+</ScrollView>
