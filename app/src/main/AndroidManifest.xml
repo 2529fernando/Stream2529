@@ -31,6 +31,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="29">
         <activity
+            android:name=".RubrikActivity"
+            android:exported="false" />
+        <activity
             android:name=".TetrisActivity"
             android:exported="false" />
         <activity

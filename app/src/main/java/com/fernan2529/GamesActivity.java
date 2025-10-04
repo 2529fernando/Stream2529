@@ -26,6 +26,10 @@ public class GamesActivity extends AppCompatActivity {
         startActivity(new Intent(this, FingerBattleActivity.class));
     }
 
+    public void openD(android.view.View v) {
+        startActivity(new Intent(this, RubrikActivity.class));
+    }
+
 
 
 }
