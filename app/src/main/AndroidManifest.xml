@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ===== OpenGL ES 2.0 (REQUERIDO para el cubo 3D) ===== -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <!-- ===== Permisos de red ===== -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- ===== Foreground Services (media) ===== -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- ===== Foreground Services (media) ===== -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- ===== Notificaciones (Android 13+) ===== -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- ===== Lectura de medios (Android 13+) ===== -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <!-- ===== Notificaciones (Android 13+) ===== -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- ===== Lectura de medios (Android 13+) ===== -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- ===== Compatibilidad Android 12- ===== -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- ===== Compatibilidad Android 12- ===== -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" /> <!-- ===== Escritura (solo hasta Android 9 / API 28) ===== -->
+        android:maxSdkVersion="32" />
+
+    <!-- ===== Escritura (solo hasta Android 9 / API 28) ===== -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" /> <!-- ===== Instalar APKs desde la app (si realmente lo usas) ===== -->
+        android:maxSdkVersion="28" />
+
+    <!-- ===== Instalar APKs desde la app (si realmente lo usas) ===== -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
@@ -30,9 +48,13 @@
         android:theme="@style/Theme.ExoPlayerJava"
         android:usesCleartextTraffic="true"
         tools:targetApi="29">
-        <activity
-            android:name=".RubrikActivity"
-            android:exported="false" />
+
+        <!-- Declaración de la Activity con nombre COMPLETO -->
+        <activity android:name="com.fernan2529.RubrikActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+
         <activity
             android:name=".TetrisActivity"
             android:exported="false" />
@@ -86,16 +108,18 @@
             android:exported="false" />
         <activity
             android:name=".WebViewActivities.WebViewActivitySoloFin"
-            android:exported="false" /> <!-- ====== Lanzador ====== -->
+            android:exported="false" />
+
+        <!-- ====== Lanzador ====== -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- ===== Pantallas varias ===== -->
+        </activity>
+
         <!-- ===== Watch que aceptan abrir videos externos ===== -->
         <activity
             android:name=".WatchViewActivities.WatchActivityViewGeneral"
@@ -105,28 +129,32 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <!-- Recibir intents para reproducir video -->
                 <data android:mimeType="video/*" />
             </intent-filter>
-        </activity> <!-- ===== WebView / Navegación ===== -->
+        </activity>
+
+        <!-- ===== WebView / Navegación ===== -->
         <activity
             android:name=".WebViewActivities.WebViewActivityGeneral"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" /> <!-- ===== Otras pantallas principales ===== -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+
+        <!-- ===== Otras pantallas principales ===== -->
         <activity
             android:name=".DescargasActivity"
             android:exported="false" />
         <activity
             android:name=".JuegosActivity"
             android:exported="false"
-            android:screenOrientation="portrait" /> <!-- ====== Actividades de Categoría ====== -->
+            android:screenOrientation="portrait" />
+
+        <!-- ====== Actividades de Categoría ====== -->
         <activity
             android:name=".Categorias.Entretenimiento"
             android:configChanges="orientation|screenSize"
@@ -175,12 +203,15 @@
             android:name=".Categorias.Noticias"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
+
         <activity
             android:name=".MainActivityfin"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:hardwareAccelerated="true"
-            android:screenOrientation="sensor" /> <!-- ===== Animes / Series / Películas ===== -->
+            android:screenOrientation="sensor" />
+
+        <!-- ===== Animes / Series / Películas ===== -->
         <activity
             android:name=".Anime.anime1"
             android:configChanges="orientation|screenSize"
@@ -221,7 +252,9 @@
             android:exported="false" />
         <activity
             android:name=".Series.series6"
-            android:exported="false" /> <!-- ===== Doramas ===== -->
+            android:exported="false" />
+
+        <!-- ===== Doramas ===== -->
         <activity
             android:name=".Doramas.doramas1"
             android:configChanges="orientation|screenSize"
@@ -233,16 +266,22 @@
         <activity
             android:name=".Doramas.doramas3"
             android:configChanges="orientation|screenSize"
-            android:exported="false" /> <!-- ===== Descargas / Utilidades ===== -->
+            android:exported="false" />
+
+        <!-- ===== Descargas / Utilidades ===== -->
         <activity
             android:name=".DownloadlinkActivity"
             android:exported="false" />
         <activity
             android:name=".DownloadActivity"
-            android:exported="false" /> <!-- ===== Nube / PIN ===== -->
+            android:exported="false" />
+
+        <!-- ===== Nube / PIN ===== -->
         <activity
             android:name=".nubeactivity"
-            android:exported="false" /> <!-- ===== Chat / Splash / Login ===== -->
+            android:exported="false" />
+
+        <!-- ===== Chat / Splash / Login ===== -->
         <activity
             android:name=".MainActivitychat"
             android:exported="false" />
@@ -263,7 +302,9 @@
             android:exported="false" />
         <activity
             android:name=".texting"
-            android:exported="false" /> <!-- ===== Varias ===== -->
+            android:exported="false" />
+
+        <!-- ===== Varias ===== -->
         <activity
             android:name=".version"
             android:exported="false" />
@@ -277,7 +318,9 @@
             android:name=".Navegation"
             android:configChanges="orientation|screenSize|keyboardHidden|layoutDirection|screenLayout|smallestScreenSize|uiMode"
             android:exported="false"
-            android:launchMode="singleTop" /> <!-- ===== FileProvider ===== -->
+            android:launchMode="singleTop" />
+
+        <!-- ===== FileProvider ===== -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -286,10 +329,11 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider> <!-- ===== Google Ads (demo ID) ===== -->
+        </provider>
+
+        <!-- ===== Google Ads (demo ID) ===== -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713" />
     </application>
-
 </manifest>

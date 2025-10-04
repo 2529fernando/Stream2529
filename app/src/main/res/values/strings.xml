@@ -6,6 +6,10 @@
     <string name="tile_music">Música</string>
     <string name="tile_videos">Videos</string>
     <string name="tile_photos">Fotos</string>
+    <string name="scramble">Mezclar</string>
+    <string name="reset">Reiniciar</string>
+    <string name="undo">Deshacer</string>
+    <string name="hint">Pista</string>
 
 
 </resources>
