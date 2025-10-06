@@ -119,6 +119,9 @@ public class RubrikActivity extends AppCompatActivity {
                             isOrbitMode = true;
                         }
                     }
+
+                    // Debug: ver si se detectó pick o no (descomenta para usar)
+                    // android.util.Log.d("RubikTouch", "DOWN at "+downX+","+downY+" pick="+(pick==null? "null": pick.face));
                     return true;
                 }
                 case MotionEvent.ACTION_MOVE: {
@@ -212,9 +215,10 @@ public class RubrikActivity extends AppCompatActivity {
         private final Random rng = new Random();
 
         // Picking/geom
-        private static final float BIG = 1.575f;
         private static final float HALF = 0.48f;
         private static final float LAYER_STEP = 1.05f;
+        // Ajuste: limitamos la aceptación del pick EXACTAMENTE al tamaño del cubo proyectado
+        private static final float BIG = LAYER_STEP + HALF - 0.02f;
 
         // ------------- Tipos auxiliares -------------
         static class Cubelet {
@@ -258,7 +262,9 @@ public class RubrikActivity extends AppCompatActivity {
             }
             if (currentMove!=null) {
                 float t = Math.min(1f,(now-animStartMs)/(float)ANIM_MS);
-                float angle = (currentMove.turns==3 ? -90f : 90f*currentMove.turns) * easeInOutQuad(t);
+                float angle;
+                if (currentMove.turns == 3) angle = -90f * easeInOutQuad(t);
+                else angle = 90f * currentMove.turns * easeInOutQuad(t);
                 applyTempRotation(currentMove.axis, currentMove.layerIdx, angle);
                 if (t>=1f) {
                     finalizeRotation(currentMove.axis, currentMove.layerIdx, currentMove.turns);
@@ -321,7 +327,9 @@ public class RubrikActivity extends AppCompatActivity {
             hit = nearest(hit, intersectPlane(p0,rx,ry,rz, -BIG, 'Z'));
             if (hit == null) return null;
 
-            if (Math.abs(hit.u) <= BIG && Math.abs(hit.v) <= BIG) {
+            // Limitar el área de aceptación exactamente al tamaño físico del cubo en el mundo:
+            float faceExtent = LAYER_STEP + HALF;
+            if (Math.abs(hit.u) <= faceExtent && Math.abs(hit.v) <= faceExtent) {
                 return new PickResult(hit.tag, hit.u, hit.v);
             }
             return null;
@@ -345,58 +353,84 @@ public class RubrikActivity extends AppCompatActivity {
         }
 
         // ---------- Mapeo gesto -> (eje, capa, sentido) ----------
-        // Importante: pick.u/pick.v SIEMPRE son coords del mundo (no dependen del signo que usamos en faceBasis2D):
-        //  z/Z: u=x, v=y   |  y/Y: u=x, v=z   |  x/X: u=y, v=z
+        // Ajustes globales:
+        // INVERT_HORIZONTAL_SIGN  -> invertir sentido horizontal globalmente (si tu pantalla/dpi lo requiere)
+        // INVERT_VERTICAL_SIGN    -> invertir sentido vertical (arrastre abajo->arriba)
         AxisLayerDir mapDragToAxisLayer(char face, float u, float v, float du, float dv) {
+            final boolean INVERT_HORIZONTAL_SIGN = false;
+            final boolean INVERT_VERTICAL_SIGN = true;
+
             boolean alongU = Math.abs(du) >= Math.abs(dv);
+
+            int sign;
+            if (alongU) sign = (du > 0f) ? +1 : -1;
+            else         sign = (dv > 0f) ? +1 : -1;
+
+            if (alongU && INVERT_HORIZONTAL_SIGN) sign = -sign;
+            if (!alongU && INVERT_VERTICAL_SIGN) sign = -sign;
+
+            // android.util.Log.d("RubikMap", "face="+face+" u="+u+" v="+v+" du="+du+" dv="+dv+" alongU="+alongU+" sign="+sign);
+
             switch (face) {
-                case 'z': // frente (n=+Z)  in-plane: x(u), y(v)
-                    if (alongU) { // mover a la derecha/izquierda -> eje Y, capa por y
-                        boolean cw = du > 0;
-                        return new AxisLayerDir('Y', quantToIdx(v), cw);
-                    } else {       // mover arriba/abajo -> eje X, capa por x
-                        boolean cw = dv > 0;
-                        return new AxisLayerDir('X', quantToIdx(u), cw);
+                case 'z': // Frente +Z: in-plane u=x (hor), v=y (ver)
+                    if (alongU) {
+                        int layer = quantToIdx(v);
+                        boolean cw = (sign > 0); // derecha => cw (vista frontal), ajustado por flags
+                        return new AxisLayerDir('Y', layer, cw);
+                    } else {
+                        int layer = quantToIdx(u);
+                        boolean cw = (sign < 0);
+                        return new AxisLayerDir('X', layer, cw);
                     }
-                case 'Z': // atrás (n=-Z)  in-plane: x(u), y(v)
-                    if (alongU) { // derecha/izquierda -> eje Y (misma capa por y)
-                        boolean cw = du > 0;
-                        return new AxisLayerDir('Y', quantToIdx(v), cw);
-                    } else {       // arriba/abajo -> eje X (capa por x)
-                        boolean cw = dv < 0; // invertido respecto al frente
-                        return new AxisLayerDir('X', quantToIdx(u), cw);
+                case 'Z': // Atrás -Z
+                    if (alongU) {
+                        int layer = quantToIdx(v);
+                        boolean cw = (sign < 0);
+                        return new AxisLayerDir('Y', layer, cw);
+                    } else {
+                        int layer = quantToIdx(u);
+                        boolean cw = (sign > 0);
+                        return new AxisLayerDir('X', layer, cw);
                     }
-                case 'y': // arriba (n=+Y) in-plane: x(u), z(v)
-                    if (alongU) { // izq/der en techo -> eje Z, capa por z
-                        boolean cw = du > 0;
-                        return new AxisLayerDir('Z', quantToIdx(v), cw);
-                    } else {       // adelante/atrás -> eje X, capa por x
-                        boolean cw = dv > 0;
-                        return new AxisLayerDir('X', quantToIdx(u), cw);
+                case 'y': // Arriba +Y
+                    if (alongU) {
+                        int layer = quantToIdx(v);
+                        boolean cw = (sign < 0);
+                        return new AxisLayerDir('Z', layer, cw);
+                    } else {
+                        int layer = quantToIdx(u);
+                        boolean cw = (sign > 0);
+                        return new AxisLayerDir('X', layer, cw);
                     }
-                case 'Y': // abajo (n=-Y)  in-plane: x(u), z(v)
-                    if (alongU) { // izq/der en base -> eje Z, capa por z
-                        boolean cw = du < 0; // invertido
-                        return new AxisLayerDir('Z', quantToIdx(v), cw);
-                    } else {       // adelante/atrás -> eje X, capa por x
-                        boolean cw = dv > 0;
-                        return new AxisLayerDir('X', quantToIdx(u), cw);
+                case 'Y': // Abajo -Y
+                    if (alongU) {
+                        int layer = quantToIdx(v);
+                        boolean cw = (sign > 0);
+                        return new AxisLayerDir('Z', layer, cw);
+                    } else {
+                        int layer = quantToIdx(u);
+                        boolean cw = (sign > 0);
+                        return new AxisLayerDir('X', layer, cw);
                     }
-                case 'x': // derecha (n=+X) in-plane: y(u), z(v)
-                    if (alongU) { // arriba/abajo en cara derecha -> eje Z, capa por z
-                        boolean cw = du < 0; // invertido
-                        return new AxisLayerDir('Z', quantToIdx(v), cw);
-                    } else {       // adelante/atrás -> eje Y, capa por y
-                        boolean cw = dv > 0;
-                        return new AxisLayerDir('Y', quantToIdx(u), cw);
+                case 'x': // Derecha +X
+                    if (alongU) {
+                        int layer = quantToIdx(v);
+                        boolean cw = (sign > 0);
+                        return new AxisLayerDir('Z', layer, cw);
+                    } else {
+                        int layer = quantToIdx(u);
+                        boolean cw = (sign < 0);
+                        return new AxisLayerDir('Y', layer, cw);
                     }
-                case 'X': // izquierda (n=-X) in-plane: y(u), z(v)
-                    if (alongU) { // arriba/abajo en cara izquierda -> eje Z, capa por z
-                        boolean cw = du > 0; // invertido respecto a 'x'
-                        return new AxisLayerDir('Z', quantToIdx(v), cw);
-                    } else {       // adelante/atrás -> eje Y, capa por y
-                        boolean cw = dv > 0;
-                        return new AxisLayerDir('Y', quantToIdx(u), cw);
+                case 'X': // Izquierda -X
+                    if (alongU) {
+                        int layer = quantToIdx(v);
+                        boolean cw = (sign < 0);
+                        return new AxisLayerDir('Z', layer, cw);
+                    } else {
+                        int layer = quantToIdx(u);
+                        boolean cw = (sign > 0);
+                        return new AxisLayerDir('Y', layer, cw);
                     }
             }
             return null;
@@ -415,7 +449,8 @@ public class RubrikActivity extends AppCompatActivity {
         // ---------- Enqueue / Animación ----------
         void enqueueAxis(char axis, int layerIdx, int turns) {
             if (layerIdx < -1 || layerIdx > 1) return;
-            queue.offer(new AxisMove(axis, layerIdx, turns));
+            char A = Character.toUpperCase(axis);
+            queue.offer(new AxisMove(A, layerIdx, turns));
         }
         void scramble(int n) {
             char[] axes={'X','Y','Z'};
