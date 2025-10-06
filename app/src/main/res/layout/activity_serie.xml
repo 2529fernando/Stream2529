@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <ImageView
             android:id="@+id/series"
             android:layout_width="wrap_content"
@@ -44,9 +43,6 @@
             android:id="@+id/btn_ver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-
             android:layout_marginTop="112dp"
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="360dp"
@@ -62,9 +58,6 @@
             android:id="@+id/button_reproductor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-
             android:layout_marginStart="148dp"
             android:layout_marginTop="112dp"
             android:layout_marginEnd="11dp"
@@ -77,7 +70,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
-
         <Spinner
             android:id="@+id/spinner_activities"
             android:layout_width="366dp"
@@ -85,12 +77,10 @@
             android:layout_marginTop="170dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/spinner_with_chevron"
-
-        app:layout_constraintBottom_toTopOf="@+id/theend"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintBottom_toTopOf="@+id/theend"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/theend"
@@ -146,13 +136,22 @@
             android:id="@+id/avatar"
             android:layout_width="wrap_content"
             android:layout_height="157dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/juegode"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chucky"
             app:srcCompat="@mipmap/avatar" />
 
+        <!-- NUEVO IMAGEVIEW -->
+        <ImageView
+            android:id="@+id/juegode"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            app:layout_constraintTop_toBottomOf="@+id/avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@mipmap/juegode" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>

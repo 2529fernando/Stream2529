@@ -25,6 +25,7 @@ import com.fernan2529.Series.series4;
 import com.fernan2529.Series.series5;
 import com.fernan2529.Series.series6;
 
+import com.fernan2529.Series.series7;
 import com.fernan2529.data.CategoriesRepository;
 import com.fernan2529.nav.CategoryNavigator;
 
@@ -144,6 +145,7 @@ public class Serie extends AppCompatActivity {
         map.put(R.id.supernatural, series4.class);
         map.put(R.id.chucky,       series5.class);
         map.put(R.id.avatar,       series6.class);
+        map.put(R.id.juegode,      series7.class);
 
         for (int i = 0; i < map.size(); i++) {
             final int viewId = map.keyAt(i);
