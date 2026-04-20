@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Excepciones para permitir subir los archivos APK generados
+!*.apk
+!**/build/outputs/apk/**/*.apk
