@@ -37,7 +37,7 @@ import java.util.List;
 public class nubeactivity extends AppCompatActivity {
 
     private static final String STATE_PIN_OK = "state_pin_ok";
-    private static final String CORRECT_PIN = "7634";
+    private static final String CORRECT_PIN = "1997";
 
     private Button openWebButton;
     private boolean pinGranted = false;
