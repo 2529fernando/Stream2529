@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <!-- PlayerView con controller personalizado -->
-    <com.google.android.exoplayer2.ui.PlayerView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,7 +15,6 @@
         app:show_buffering="never"
         android:keepScreenOn="true" />
 
-    <!-- Spinner clásico (opcional) -->
     <ProgressBar
         android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleLarge"
@@ -25,7 +23,6 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <!-- Overlay central 1→100 -->
     <FrameLayout
         android:id="@+id/loading_overlay"
         android:layout_width="match_parent"
@@ -57,7 +54,6 @@
         </LinearLayout>
     </FrameLayout>
 
-    <!-- Overlay de volumen (barra vertical roja) -->
     <LinearLayout
         android:id="@+id/volume_overlay"
         android:layout_width="60dp"
@@ -91,7 +87,6 @@
             android:layout_marginTop="8dp" />
     </LinearLayout>
 
-    <!-- NUEVO: Overlay de seek (adelantar/retroceder) -->
     <LinearLayout
         android:id="@+id/seek_overlay"
         android:layout_width="wrap_content"
@@ -123,4 +118,3 @@
     </LinearLayout>
 
 </FrameLayout>
-

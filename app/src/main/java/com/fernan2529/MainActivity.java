@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         map.put(R.id.donaciones,       donaciones.class);
         map.put(R.id.btn_juegos,       GamesActivity.class);
         map.put(R.id.potifyy,          MusicActivity.class);
-        map.put(R.id.btnchat,          SplashActivity.class);
+        map.put(R.id.btnchat,          MainActivity.class);
         // Fila 1
         map.put(R.id.btn_navegador,    Navegation.class);
         map.put(R.id.btn_descargas,    DownloadlinkActivity.class);

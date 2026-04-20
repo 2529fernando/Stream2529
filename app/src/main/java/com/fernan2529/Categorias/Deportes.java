@@ -14,12 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.SparseArray;
 
 import com.fernan2529.R;
-
-// ===== IMPORTS =====
-import com.fernan2529.MainActivity; // si es MainActivity14, cámbialo aquí
+import com.fernan2529.MainActivity;
 import com.fernan2529.Reproductor;
 import com.fernan2529.WebViewActivities.WebViewActivityGeneral;
-
+import com.fernan2529.WebViewActivities.WebViewActivityGeneral2;
 import com.fernan2529.data.CategoriesRepository;
 import com.fernan2529.nav.CategoryNavigator;
 
@@ -27,38 +25,46 @@ public class Deportes extends AppCompatActivity {
 
     private Spinner spinner;
     private String[] categories = new String[0];
-    private int indexThis = -1;           // índice real de "Deportes"
-    private boolean userTouched = false;  // marca interacción real (no programática)
+    private int indexThis = -1;
+    private boolean userTouched = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deportes);
 
-        // Botones básicos
         setupButton(R.id.deportes, MainActivity.class);
         setupButton(R.id.btn_ver, MainActivity.class);
         setupButton(R.id.button_reproductor, Reproductor.class);
 
-        setupSpinner();     // ⬅️ lógica aplicada con spinner_activities
+        setupSpinner();
         setupWebButtons();
     }
 
-    // ----------------- Utilidades -----------------
+    // ---------------- BOTONES ----------------
     private void setupButton(int viewId, Class<?> activityClass) {
         View v = findViewById(viewId);
-        if (v != null && activityClass != null) {
-            v.setOnClickListener(_v -> startActivity(new Intent(this, activityClass)));
+        if (v != null) {
+            v.setOnClickListener(_v -> {
+                startActivity(new Intent(this, activityClass));
+                finish(); // 🔥 evita acumular pantallas
+            });
         }
     }
 
+    // ---------------- WEBVIEW ----------------
     private void openWebView(String url) {
-        if (url == null || url.isEmpty()) return;
+        if (url == null || url.isEmpty()) {
+            toast("URL inválida");
+            return;
+        }
+
         Intent intent = new Intent(this, WebViewActivityGeneral.class);
         intent.putExtra("url", url);
         startActivity(intent);
     }
 
+    // ---------------- UTIL ----------------
     private static int findIndex(String[] arr, String target) {
         if (arr == null || target == null) return -1;
         for (int i = 0; i < arr.length; i++) {
@@ -71,70 +77,69 @@ public class Deportes extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    // ----------------- Spinner con lógica unificada -----------------
+    // ---------------- SPINNER ----------------
     private void setupSpinner() {
-        // ✅ usar spinner_activities (no spinner_activities3)
+
         spinner = findViewById(R.id.spinner_activities);
         if (spinner == null) return;
 
-        // Cargar categorías desde el repositorio central
         CategoriesRepository repo = new CategoriesRepository();
         String[] loaded = repo.getCategories();
-        if (loaded != null) categories = loaded;
+        if (loaded != null && loaded.length > 0) {
+            categories = loaded;
+        }
 
-        // Detectar índice real por nombre
         indexThis = findIndex(categories, "Deportes");
 
-        // Fallback seguro si no se encuentra (Deportes suele ser 7)
         if (indexThis < 0) {
-            indexThis = Math.min(7, Math.max(0, categories.length - 1));
+            indexThis = 0;
         }
 
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        // Mantener “Deportes” seleccionado sin disparar navegación
         spinner.setSelection(indexThis, false);
 
-        // Marcar interacción real (evita triggers por setSelection programático)
         spinner.setOnTouchListener((v, e) -> {
-            if (e.getAction() == MotionEvent.ACTION_DOWN || e.getAction() == MotionEvent.ACTION_UP) {
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
                 userTouched = true;
             }
             return false;
         });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!userTouched) return; // ignora selección programática
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!userTouched) return;
                 userTouched = false;
 
-                if (categories.length == 0 || position < 0 || position >= categories.length) return;
-                if (position == 0 || position == indexThis) return; // placeholder o misma pantalla
+                if (position == indexThis) return;
 
-                // Navegación centralizada
                 Intent intent = CategoryNavigator.buildIntent(Deportes.this, position);
-                if (intent == null) {
-                    toast("No se pudo abrir la categoría seleccionada.");
-                    spinner.post(() -> spinner.setSelection(0, false));
-                    return;
+
+                if (intent != null) {
+                    startActivity(intent);
+                    finish(); // 🔥 evita acumulación
+                } else {
+                    toast("Categoría no disponible");
                 }
-
-                startActivity(intent);
-
-                // Volver visualmente al placeholder para próximas selecciones
-                spinner.post(() -> spinner.setSelection(0, false));
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) { /* no-op */ }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
-    // ----------------- Botones Web (todos con WebViewActivityGeneral) -----------------
+    // ---------------- BOTONES WEB ----------------
     private void setupWebButtons() {
+
         SparseArray<String> map = new SparseArray<>();
-        map.put(R.id.libre,       "https://futbollibre-tv.nl/");
+
         map.put(R.id.dsports,     "https://www.cablevisionhd.com/directv-sports-en-vivo.html");
         map.put(R.id.dsports2,    "https://www.cablevisionhd.com/directv-sports-2-en-vivo.html");
         map.put(R.id.dsportsplus, "https://www.cablevisionhd.com/directv-sports-plus-en-vivo.html");
@@ -153,13 +158,15 @@ public class Deportes extends AppCompatActivity {
         map.put(R.id.foxsports,   "https://www.cablevisionhd.com/fox-sports-en-vivo.html");
 
         for (int i = 0; i < map.size(); i++) {
+
             final int viewId = map.keyAt(i);
             final String url = map.valueAt(i);
 
             View btn = findViewById(viewId);
-            if (btn == null || url == null || url.isEmpty()) continue;
 
-            btn.setOnClickListener(v -> openWebView(url));
+            if (btn != null) {
+                btn.setOnClickListener(v -> openWebView(url));
+            }
         }
     }
 }

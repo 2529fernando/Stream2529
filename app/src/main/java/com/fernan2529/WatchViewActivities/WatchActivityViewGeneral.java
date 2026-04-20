@@ -8,8 +8,10 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -20,13 +22,16 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.fernan2529.R;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlayerView;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.media3.ui.PlayerView;
 
 public class WatchActivityViewGeneral extends AppCompatActivity {
 
@@ -49,9 +54,10 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
     private PlayerView playerView;
     private ProgressBar progressBar;
 
-    // Controller views (dentro del PlayerView/custom_controller)
+    // Controller views
     private ImageView bt_fullscreen, bt_lockscreen, bt_fullscreen_aspect, bt_repeat, bt_rotation_lock, bufferLogo2;
-    private ImageView exoRew, exoPlay, exoPause, exoFfwd;
+    private ImageView exoRew, exoFfwd;
+    private ImageButton exoPlayPause; // Botón unificado
     private View timeBar;
     private TextView videoTitle;
 
@@ -60,12 +66,12 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
     private TextView    loadingPercent;
     private ProgressBar loadingProgress;
 
-    // Overlay de volumen (vertical)
+    // Overlay de volumen
     private View volumeOverlay;
     private ProgressBar volumeProgress;
     private TextView volumePercent;
 
-    // NUEVO: Overlay de seek (adelantar/retroceder)
+    // Overlay de seek
     private View seekOverlay;
     private TextView seekDelta, seekTarget;
 
@@ -103,7 +109,7 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         }
     };
 
-    // Gestos (volumen + seek)
+    // Gestos
     private AudioManager audioManager;
     private final Handler uiHandler = new Handler();
 
@@ -114,35 +120,40 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         if (seekOverlay != null) seekOverlay.setVisibility(View.GONE);
     };
 
-    // Volumen (vertical en borde derecho)
     private boolean adjustingVolume = false;
     private float touchStartY = 0f;
     private int startVolume = 0;
     private static final float VOLUME_SENSITIVITY = 1.2f;
-    private static final float RIGHT_EDGE_FRACTION = 0.25f; // gesto de volumen en 25% derecho
+    private static final float RIGHT_EDGE_FRACTION = 0.25f;
 
-    // Seek (horizontal en toda la pantalla)
     private boolean seeking = false;
     private float touchStartX = 0f;
     private long startPositionMs = 0L;
     private long targetPositionMs = 0L;
     private boolean downInRightEdge = false;
-    private static final float DIR_THRESHOLD = 1.2f; // para distinguir gesto dominante (H vs V)
-    private static final long SEEK_FULL_WIDTH_MS = 120_000L; // deslizar ancho completo = ±120s
+    private static final float DIR_THRESHOLD = 1.2f;
+    private static final long SEEK_FULL_WIDTH_MS = 120_000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Modo Inmersivo Real
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (windowInsetsController != null) {
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
+            windowInsetsController.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        }
+
         setContentView(R.layout.activity_watch_view_general);
 
-        // Views de la Activity
         playerView       = findViewById(R.id.player);
         progressBar      = findViewById(R.id.progress_bar);
         loadingOverlay   = findViewById(R.id.loading_overlay);
         loadingProgress  = findViewById(R.id.loading_progress);
         loadingPercent   = findViewById(R.id.loading_percent);
 
-        // Overlays
         volumeOverlay  = findViewById(R.id.volume_overlay);
         volumeProgress = findViewById(R.id.volume_progress);
         volumePercent  = findViewById(R.id.volume_percent);
@@ -153,7 +164,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         seekTarget  = findViewById(R.id.seek_target);
         if (seekOverlay != null) seekOverlay.setVisibility(View.GONE);
 
-        // Vistas del controller (dentro del PlayerView)
         bt_fullscreen        = playerView.findViewById(R.id.bt_fullscreen);
         bt_lockscreen        = playerView.findViewById(R.id.exo_lock);
         bt_fullscreen_aspect = playerView.findViewById(R.id.bt_fullscreen_aspect);
@@ -161,18 +171,31 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         bt_rotation_lock     = playerView.findViewById(R.id.bt_rotation_lock);
         bufferLogo2          = playerView.findViewById(R.id.buffer_logo2);
 
-        exoRew   = playerView.findViewById(R.id.exo_rew);
-        exoPlay  = playerView.findViewById(R.id.exo_play);
-        exoPause = playerView.findViewById(R.id.exo_pause);
-        exoFfwd  = playerView.findViewById(R.id.exo_ffwd);
-        timeBar  = playerView.findViewById(R.id.exo_progress);
-        videoTitle = playerView.findViewById(R.id.video_title);
+        exoRew       = playerView.findViewById(R.id.exo_rew);
+        exoFfwd      = playerView.findViewById(R.id.exo_ffwd);
+        exoPlayPause = playerView.findViewById(R.id.exo_play_pause); // Enlace al botón unificado
+        timeBar      = playerView.findViewById(R.id.exo_progress);
+        videoTitle   = playerView.findViewById(R.id.video_title);
 
-        // Extras
-        String url   = getIntent().getStringExtra(EXTRA_URL);
-        String title = getIntent().getStringExtra(EXTRA_TITLE);
+        // Soporte para recepción "Abrir con..." y apertura interna
+        String url = null;
+        String title = null;
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+
+        if (Intent.ACTION_VIEW.equals(action) && intent.getData() != null) {
+            // Viene desde otra app (ej. Explorador de archivos)
+            url = intent.getData().toString();
+            title = "Reproducción Local";
+        } else {
+            // Viene desde dentro de tu propia app
+            url = intent.getStringExtra(EXTRA_URL);
+            title = intent.getStringExtra(EXTRA_TITLE);
+        }
+
         if (title != null && !title.trim().isEmpty()) {
-            setTitle(title); // opcional
+            setTitle(title);
             if (videoTitle != null) {
                 videoTitle.setText(title);
                 videoTitle.setVisibility(View.VISIBLE);
@@ -180,17 +203,18 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         } else if (videoTitle != null) {
             videoTitle.setVisibility(View.GONE);
         }
+
         if (url == null || url.trim().isEmpty()) {
             Toast.makeText(this, "No se recibió URL de reproducción", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        // ExoPlayer
         exoPlayer = new ExoPlayer.Builder(this)
                 .setSeekBackIncrementMs(5_000)
                 .setSeekForwardIncrementMs(5_000)
                 .build();
+
         playerView.setPlayer(exoPlayer);
         playerView.setKeepScreenOn(true);
         playerView.setResizeMode(resizeModes[resizeIndex]);
@@ -198,7 +222,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         updateRepeatIcon();
         playerView.setUseController(true);
 
-        // Overlay de carga 1→100
         loadingHandler = new Handler(getMainLooper());
         if (loadingOverlay != null) loadingOverlay.setVisibility(View.VISIBLE);
         if (loadingProgress != null) { loadingProgress.setMax(100); loadingProgress.setProgress(1); }
@@ -206,12 +229,15 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         if (bufferLogo2 != null) bufferLogo2.setVisibility(View.GONE);
         startLoadingAnimation();
 
+        // Configuración del Listener del Player
         exoPlayer.addListener(new Player.Listener() {
-            @Override public void onPlaybackStateChanged(int state) {
+            @Override
+            public void onPlaybackStateChanged(int state) {
                 if (progressBar != null) {
                     progressBar.setVisibility(state == Player.STATE_BUFFERING && !firstReadyReached
                             ? View.VISIBLE : View.GONE);
                 }
+
                 if (!firstReadyReached) {
                     if (state == Player.STATE_BUFFERING) {
                         playerView.showController();
@@ -222,6 +248,14 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
                         if (bufferLogo2 != null) bufferLogo2.setVisibility(View.GONE);
                     }
                 }
+
+                updatePlayPauseIcon();
+            }
+
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                // Actualiza el icono (Play/Pause) inmediatamente cuando cambia el estado
+                updatePlayPauseIcon();
             }
         });
 
@@ -229,37 +263,60 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         exoPlayer.prepare();
         exoPlayer.play();
 
-        // Fullscreen: fija orientación
+        setupClickListeners();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                if (isLock) return;
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    if (bt_fullscreen != null) bt_fullscreen.performClick();
+                } else {
+                    setEnabled(false);
+                    finish();
+                }
+            }
+        });
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        setupGesturesOnPlayerView();
+    }
+
+    // Función para cambiar los iconos rojos del botón central
+    private void updatePlayPauseIcon() {
+        if (exoPlayPause == null || exoPlayer == null) return;
+
+        if (exoPlayer.isPlaying()) {
+            exoPlayPause.setImageResource(R.drawable.ic_pause_red);
+        } else {
+            exoPlayPause.setImageResource(R.drawable.ic_play_red);
+        }
+    }
+
+    private void setupClickListeners() {
         if (bt_fullscreen != null) {
             bt_fullscreen.setOnClickListener(v -> {
-                if (isLock) return; // bloqueado
+                if (isLock) return;
                 if (!isFullScreen) {
-                    bt_fullscreen.setImageDrawable(ContextCompat.getDrawable(
-                            this, R.drawable.ic_baseline_fullscreen_exit));
+                    bt_fullscreen.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_fullscreen_exit));
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     isFullScreen = true;
                 } else {
-                    bt_fullscreen.setImageDrawable(ContextCompat.getDrawable(
-                            this, R.drawable.ic_baseline_fullscreen));
+                    bt_fullscreen.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_fullscreen));
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     isFullScreen = false;
                 }
             });
         }
 
-        // Candado: bloquea todo menos el propio candado
         if (bt_lockscreen != null) {
             bt_lockscreen.setOnClickListener(v -> {
                 boolean newLock = !isLock;
                 lockScreen(newLock);
-                bt_lockscreen.setImageDrawable(ContextCompat.getDrawable(
-                        this, newLock ? R.drawable.ic_baseline_lock : R.drawable.ic_outline_lock_open
-                ));
+                bt_lockscreen.setImageDrawable(ContextCompat.getDrawable(this, newLock ? R.drawable.ic_baseline_lock : R.drawable.ic_outline_lock_open));
                 Toast.makeText(this, newLock ? "Controles bloqueados" : "Controles desbloqueados", Toast.LENGTH_SHORT).show();
             });
         }
 
-        // Aspecto rápido
         if (bt_fullscreen_aspect != null) {
             bt_fullscreen_aspect.setOnClickListener(v -> {
                 if (isLock) return;
@@ -267,7 +324,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
             });
         }
 
-        // Repeat
         if (bt_repeat != null) {
             bt_repeat.setOnClickListener(v -> {
                 if (isLock) return;
@@ -280,7 +336,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
             });
         }
 
-        // Bloqueo rotacional
         if (bt_rotation_lock != null) {
             bt_rotation_lock.setOnClickListener(v -> {
                 if (isLock) return;
@@ -296,26 +351,8 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
             });
             updateRotationLockIcon();
         }
-
-        // Back
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override public void handleOnBackPressed() {
-                if (isLock) return;
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    if (bt_fullscreen != null) bt_fullscreen.performClick();
-                } else {
-                    setEnabled(false);
-                    finish();
-                }
-            }
-        });
-
-        // Gestos (volumen + seek)
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        setupGesturesOnPlayerView();
     }
 
-    // === Gestos: volumen (V) en borde derecho y seek (H) en toda la pantalla ===
     private void setupGesturesOnPlayerView() {
         if (playerView == null) return;
 
@@ -331,15 +368,12 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
 
             switch (action) {
                 case MotionEvent.ACTION_DOWN: {
-                    // Reset flags
                     adjustingVolume = false;
                     seeking = false;
-
                     touchStartX = x;
                     touchStartY = y;
                     downInRightEdge = (x >= rightEdgeX);
 
-                    // Estados iniciales
                     if (exoPlayer != null) {
                         startPositionMs = exoPlayer.getCurrentPosition();
                         targetPositionMs = startPositionMs;
@@ -348,7 +382,7 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
                         targetPositionMs = 0L;
                     }
                     startVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                    return false; // deja que ExoPlayer maneje tap para mostrar controller
+                    return false;
                 }
                 case MotionEvent.ACTION_MOVE: {
                     float dx = x - touchStartX;
@@ -356,29 +390,24 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
                     float absDx = Math.abs(dx);
                     float absDy = Math.abs(dy);
 
-                    // Decide gesto si aún no se decidió
                     if (!adjustingVolume && !seeking) {
                         if (absDx > absDy * DIR_THRESHOLD) {
-                            // Inicia SEEK horizontal (en cualquier parte)
                             seeking = true;
                             showSeekOverlay(0, startPositionMs);
                             return true;
                         } else if (downInRightEdge && absDy > absDx * DIR_THRESHOLD) {
-                            // Inicia VOLUMEN vertical (solo en borde derecho)
                             adjustingVolume = true;
                             showVolumeOverlay(startVolume);
                             return true;
                         } else {
-                            // Aún indeciso
                             return false;
                         }
                     }
 
                     if (seeking) {
-                        // Mapea desplazamiento horizontal a Δtiempo
                         long deltaMs = (long)((dx / width) * SEEK_FULL_WIDTH_MS);
                         long duration = (exoPlayer != null) ? exoPlayer.getDuration() : -1L;
-                        if (duration <= 0) duration = Long.MAX_VALUE; // si duración no conocida
+                        if (duration <= 0) duration = Long.MAX_VALUE;
 
                         targetPositionMs = clampLong(startPositionMs + deltaMs, 0L, duration);
                         showSeekOverlay(deltaMs, targetPositionMs);
@@ -419,6 +448,22 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (isLock) return super.onKeyDown(keyCode, event);
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (audioManager != null) {
+                int direction = keyCode == KeyEvent.KEYCODE_VOLUME_UP ? AudioManager.ADJUST_RAISE : AudioManager.ADJUST_LOWER;
+                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0);
+                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                showVolumeOverlay(currentVolume);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     private void showVolumeOverlay(int volume) {
         if (volumeOverlay == null || volumeProgress == null || volumePercent == null) return;
         int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -442,7 +487,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         uiHandler.postDelayed(hideSeekOverlayRunnable, 1200);
     }
 
-    // Loading
     private void startLoadingAnimation() {
         if (firstReadyReached) return;
         loadingHandler.removeCallbacks(loadingRunnable);
@@ -452,10 +496,12 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         }
         updateLoadingUI(loadingValue);
     }
+
     private void updateLoadingUI(int value) {
         if (loadingPercent  != null) loadingPercent.setText(value + "%");
         if (loadingProgress != null) loadingProgress.setProgress(value);
     }
+
     private void finishLoadingAnimation() {
         firstReadyReached = true;
         loadingHandler.removeCallbacks(loadingRunnable);
@@ -464,7 +510,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
     }
 
-    // Ciclo rápido de aspecto
     private void toggleAspectQuickCycle3() {
         if (playerView == null) return;
         int current = playerView.getResizeMode();
@@ -483,7 +528,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         Toast.makeText(this, label, Toast.LENGTH_SHORT).show();
     }
 
-    // Bloqueo de todos los iconos/gestos (menos el candado)
     private void lockScreen(boolean lock) {
         setIconEnabled(bt_fullscreen,       !lock);
         setIconEnabled(bt_repeat,           !lock);
@@ -491,13 +535,12 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
         setIconEnabled(bt_fullscreen_aspect,!lock);
         setIconEnabled(timeBar,             !lock);
         setIconEnabled(exoRew,              !lock);
-        setIconEnabled(exoPlay,             !lock);
-        setIconEnabled(exoPause,            !lock);
+        setIconEnabled(exoPlayPause,        !lock); // Se deshabilita el botón principal unificado
         setIconEnabled(exoFfwd,             !lock);
-        // el propio candado siempre habilitado
         setIconEnabled(bt_lockscreen,       true);
         isLock = lock;
     }
+
     private void setIconEnabled(View v, boolean enabled) {
         if (v == null) return;
         v.setEnabled(enabled);
@@ -543,6 +586,7 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (loadingHandler != null) loadingHandler.removeCallbacksAndMessages(null);
+        if (uiHandler != null) uiHandler.removeCallbacksAndMessages(null);
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
@@ -558,7 +602,6 @@ public class WatchActivityViewGeneral extends AppCompatActivity {
                     this, isFullScreen ? R.drawable.ic_baseline_fullscreen_exit : R.drawable.ic_baseline_fullscreen
             ));
         }
-        // No liberar orientación automáticamente.
     }
 
     private static int clamp(int v, int min, int max) {

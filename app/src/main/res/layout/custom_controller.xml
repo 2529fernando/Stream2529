@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#66000000">
 
-    <!-- ====== FILA SUPERIOR: IZQ (repeat) | CENTRO (título) | DER (rot-lock + lock) ====== -->
     <LinearLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
         android:paddingTop="8dp"
         android:gravity="center_vertical">
 
-        <!-- Columna izquierda (repeat) -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +31,6 @@
                 android:contentDescription="Repetir" />
         </LinearLayout>
 
-        <!-- Columna centro (título) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -61,7 +58,6 @@
                 android:visibility="gone"/>
         </LinearLayout>
 
-        <!-- Columna derecha (bloqueo rotacional + candado) -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +82,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Logo centrado (solo durante carga) -->
     <ImageView
         android:id="@+id/buffer_logo2"
         android:layout_width="50dp"
@@ -95,7 +90,6 @@
         android:src="@drawable/logoload"
         android:visibility="gone" />
 
-    <!-- % debajo del logo (opcional) -->
     <TextView
         android:id="@+id/buffer_percent"
         android:layout_width="wrap_content"
@@ -108,7 +102,6 @@
         android:textSize="13sp"
         android:visibility="gone" />
 
-    <!-- Controles centro -->
     <LinearLayout
         android:id="@+id/sec_controlvid1"
         android:layout_width="wrap_content"
@@ -122,29 +115,25 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_marginEnd="40dp"
-            android:src="@mipmap/replaypre" />
+            android:src="@mipmap/replaypre"
+            app:tint="@color/icon_red" />
 
-        <ImageView
-            android:id="@+id/exo_play"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@drawable/ic_play_red" />
-
-        <ImageView
-            android:id="@+id/exo_pause"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@drawable/ic_pause_red" />
-
-        <ImageView
-            android:id="@+id/exo_ffwd"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="40dp"
-            android:src="@mipmap/forwardnext" />
+        <ImageButton
+            android:id="@+id/exo_play_pause"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_play_red"
+            app:tint="@color/icon_red" /> <ImageView
+        android:id="@+id/exo_ffwd"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="40dp"
+        android:src="@mipmap/forwardnext"
+        app:tint="@color/icon_red" />
     </LinearLayout>
 
-    <!-- Barra inferior -->
     <LinearLayout
         android:id="@+id/sec_controlvid2"
         android:layout_width="match_parent"
@@ -198,7 +187,7 @@
                 android:src="@mipmap/maxicon" />
         </LinearLayout>
 
-        <com.google.android.exoplayer2.ui.DefaultTimeBar
+        <androidx.media3.ui.DefaultTimeBar
             android:id="@+id/exo_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

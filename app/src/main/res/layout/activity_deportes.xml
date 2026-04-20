@@ -1,258 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    android:backgroundTint="#000000">
+    android:clipToPadding="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
+        <!-- LOGO -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@mipmap/ic__stream_launcher" />
+
+        <!-- IMAGEN DERECHA -->
         <ImageView
             android:id="@+id/deportes"
             android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="120dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@mipmap/deportes" />
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
+        <!-- BOTONES -->
+        <LinearLayout
+            android:id="@+id/layout_botones"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.099"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/logo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.011"
-            app:srcCompat="@mipmap/ic__stream_launcher" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
-            android:id="@+id/btn_ver"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="40dp"
-            android:backgroundTint="#676767"
-            android:text="INICIO"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/button_reproductor"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.041" />
+            <Button
+                android:id="@+id/button_reproductor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:text="REPRODUCTOR"
+                android:backgroundTint="#676767" />
 
-        <Button
-            android:id="@+id/button_reproductor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="148dp"
-            android:layout_marginEnd="11dp"
-            android:backgroundTint="#676767"
-            android:text="REPRODUCTOR"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_ver"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.041" />
+            <Button
+                android:id="@+id/btn_ver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:text="INICIO"
+                android:backgroundTint="#676767" />
+        </LinearLayout>
 
-        <!-- Spinner con mismo estilo que el primero -->
+        <!-- SPINNER -->
         <Spinner
             android:id="@+id/spinner_activities"
-            android:layout_width="366dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="170dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/spinner_with_chevron"
-            app:layout_constraintBottom_toTopOf="@+id/dsports"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_botones"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- CANALES -->
 
         <ImageView
             android:id="@+id/dsports"
-            android:layout_width="wrap_content"
-            android:layout_height="152dp"
-            android:layout_marginTop="160dp"
-            app:layout_constraintBottom_toTopOf="@+id/dsports2"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/spinner_activities"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_activities"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/dsports" />
 
         <ImageView
-            android:id="@+id/dsportsplus"
-            android:layout_width="wrap_content"
+            android:id="@+id/dsports2"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/espn"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/dsports"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dsports2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@mipmap/dsports2" />
+
+        <ImageView
+            android:id="@+id/dsportsplus"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/dsports2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/dsportsplus" />
 
         <ImageView
             android:id="@+id/espn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/espn2"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/dsportsplus"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dsportsplus"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/es" />
 
         <ImageView
             android:id="@+id/espn2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/espn3"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/espn"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/espn"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/espn2" />
 
         <ImageView
             android:id="@+id/espn3"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/espn4"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/espn2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/espn2"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/espn3" />
 
         <ImageView
             android:id="@+id/espn4"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/espnpre"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/espn3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/espn3"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/espn4" />
 
         <ImageView
             android:id="@+id/espnpre"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/bein"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/espn4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/espn4"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/espnpre" />
 
         <ImageView
             android:id="@+id/bein"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/movistar"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/espnpre"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/espnpre"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/bein" />
 
         <ImageView
             android:id="@+id/movistar"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/tntsports"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/bein"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bein"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/movistar" />
 
         <ImageView
             android:id="@+id/tntsports"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/appletv"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/movistar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movistar"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/tntsports" />
 
         <ImageView
             android:id="@+id/appletv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/goltv"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/tntsports"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tntsports"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/appletv" />
 
         <ImageView
             android:id="@+id/goltv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/caracol"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/appletv"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appletv"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/goltv" />
 
         <ImageView
-            android:id="@+id/dsports2"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/dsportsplus"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dsports"
-            app:srcCompat="@mipmap/dsports2" />
-
-        <ImageView
-            android:id="@+id/nba"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/foxsports"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/caracol"
-            app:srcCompat="@mipmap/nba" />
-
-        <ImageView
             android:id="@+id/caracol"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/nba"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/goltv"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/goltv"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/caracol" />
 
         <ImageView
-            android:id="@+id/foxsports"
-            android:layout_width="wrap_content"
+            android:id="@+id/nba"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/caracol"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nba"
-            app:srcCompat="@mipmap/foxsports" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@mipmap/nba" />
 
         <ImageView
-            android:id="@+id/libre"
-            android:layout_width="wrap_content"
+            android:id="@+id/foxsports"
+            android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintTop_toBottomOf="@id/nba"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.094"
-            app:srcCompat="@mipmap/librefutbol" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@mipmap/foxsports" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

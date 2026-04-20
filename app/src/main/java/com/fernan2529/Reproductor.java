@@ -3,7 +3,6 @@ package com.fernan2529;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,6 +30,7 @@ import com.fernan2529.Categorias.Novelas;
 import com.fernan2529.Categorias.Peliculas;
 import com.fernan2529.Categorias.Serie;
 import com.fernan2529.WatchViewActivities.WatchActivityViewGeneral;
+import com.fernan2529.R;
 
 public class Reproductor extends AppCompatActivity {
 
@@ -48,7 +49,7 @@ public class Reproductor extends AppCompatActivity {
             null,                   // "Seleccione la Categoria"
             Entretenimiento.class,  // "Entretenimiento"
             Peliculas.class,        // "Peliculas"
-            Serie.class,           // "Serie" (se ignora para no relanzar)
+            Serie.class,           // "Serie"
             Anime.class,            // "Animes"
             Dorama.class,          // "Dorama"
             Novelas.class,          // "Novelas"
@@ -63,17 +64,18 @@ public class Reproductor extends AppCompatActivity {
 
     private boolean firstSpinnerTrigger = true;
 
-    // Activity Result para elegir video
-    private final ActivityResultLauncher<Intent> pickVideoLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri selectedVideoUri = result.getData().getData();
-                    if (selectedVideoUri != null) {
-                        String uriString = selectedVideoUri.toString(); // content://…
-                        String title = guessTitleFromUri(selectedVideoUri, "Video local");
-                        Intent intent = WatchActivityViewGeneral.newIntent(this, uriString, title);
-                        startActivity(intent);
-                    }
+    // ACTUALIZACIÓN: Uso del nuevo Photo Picker de Android (Más seguro y moderno)
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickVideoLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    // El usuario seleccionó un video
+                    String uriString = uri.toString();
+                    String title = guessTitleFromUri(uri, "Video local");
+                    Intent intent = WatchActivityViewGeneral.newIntent(this, uriString, title);
+                    startActivity(intent);
+                } else {
+                    // El usuario cerró el picker sin seleccionar nada
+                    Toast.makeText(this, "Ningún video seleccionado", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -92,11 +94,12 @@ public class Reproductor extends AppCompatActivity {
                 Toast.makeText(this, "Ingresa un enlace válido", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // Si no tiene esquema, intenta agregar http://
-            if (!link.startsWith("http://") && !link.startsWith("https://")
-                    && !link.startsWith("content://") && !link.startsWith("file://")) {
+
+            // Verifica que sea una URL segura (añade http si falta)
+            if (!link.matches("^(http|https|content|file)://.*")) {
                 link = "http://" + link;
             }
+
             String title = guessTitleFromString(link, "Reproducción directa");
             Intent intent = WatchActivityViewGeneral.newIntent(Reproductor.this, link, title);
             startActivity(intent);
@@ -105,7 +108,7 @@ public class Reproductor extends AppCompatActivity {
         // Spinner de categorías
         setupSpinner();
 
-        // Seleccionar video de la galería
+        // Seleccionar video de la galería usando Photo Picker
         Button pickVideoButton = findViewById(R.id.btn_seleccionar);
         if (pickVideoButton != null) {
             pickVideoButton.setOnClickListener(view -> pickVideoFromGallery());
@@ -121,7 +124,7 @@ public class Reproductor extends AppCompatActivity {
                 this, android.R.layout.simple_spinner_item, CATEGORY_NAMES);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setSelection(0, false); // evita trigger inicial
+        spinner.setSelection(0, false);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -132,7 +135,7 @@ public class Reproductor extends AppCompatActivity {
                 if (target == null) return;
 
                 startActivity(new Intent(Reproductor.this, target));
-                parent.setSelection(0); // opcional: regresar a "Seleccione…"
+                parent.setSelection(0);
             }
             @Override public void onNothingSelected(AdapterView<?> parent) { /* no-op */ }
         });
@@ -140,8 +143,10 @@ public class Reproductor extends AppCompatActivity {
 
     /* ============== Galería ============== */
     private void pickVideoFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        pickVideoLauncher.launch(intent);
+        // Lanza el Photo Picker filtrando solo por videos
+        pickVideoLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly.INSTANCE)
+                .build());
     }
 
     /* ============== Helpers de título ============== */
