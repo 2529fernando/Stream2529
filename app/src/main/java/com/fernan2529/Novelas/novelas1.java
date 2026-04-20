@@ -576,10 +576,7 @@ public class novelas1 extends AppCompatActivity {
                 "https://vix.com/es-es/video/video-4321970",
                 "https://vix.com/es-es/video/video-4321972",
                 "https://vix.com/es-es/video/video-4321974",
-                "https://vix.com/es-es/video/video-4321976",
-                "https://vix.com/es-es/video/video-4321978",
-                "https://vix.com/es-es/video/video-4321981",
-
+                "https://vix.com/es-es/video/video-4321976"
 
 
 
